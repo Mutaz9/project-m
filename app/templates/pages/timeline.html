@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+   <body>
+      <head>
+         <title>Timeline</title>
+      </head>
+      <b><p> Create New Post:</p></b>
+      <form id="form">
+         <label> Name:<br>  
+            <textarea name="name" class="Input" style="width: 300px" required></textarea>
+         </label>
+         <br><br>
+         <label> Email: <br>
+            <textarea name="email" class="Input" style="width: 300px" required></textarea>
+         </label>
+         <br><br>
+         <label> Content: <br>
+            <textarea name="content" class="Input" style="width: 300px" required></textarea>
+         </label>
+         <br><br>
+         <input type="submit" name="Submit" value="Post" class="Submit">
+      </form>
+      <b><p> Timeline:</p></b>
+      <p>
+         {% for post in posts %}
+            <div style="background: ghostwhite; font-size: 20px; padding: 10px; border: 1px solid lightgray; margin: 10px;">
+               name: {{post.name}} 
+               <br><br>
+               email: {{post.email}}
+               <br><br>
+               content: {{post.content}}
+               <br><br>
+               created at: {{post.created_at}}
+            </div>
+            <br><br>
+         {% endfor %}
+      </p>
+      <script>
+         const form = document.getElementById('form'); 
+         form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const payload = new URLSearchParams(formData);
+            fetch('http://localhost:5000/api/timeline_post', {
+               method: 'POST',
+               body: payload,
+            })
+         .then(res => res.json())
+         .then(data => console.log(data))
+         location.reload();
+         })
+      </script>
+   </body>
+</html>
