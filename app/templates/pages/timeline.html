@@ -41,7 +41,7 @@
             e.preventDefault();
             const formData = new FormData(form);
             const payload = new URLSearchParams(formData);
-            fetch('http://localhost:5000/api/timeline_post', {
+            fetch('/api/timeline_post', {
                method: 'POST',
                body: payload,
             })
