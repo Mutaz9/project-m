@@ -1,5 +1,4 @@
 #!/bin/bash
-tmux kill-server
 cd project-m
 git fetch && git reset origin/main --hard
 python3.10 -m venv venv
