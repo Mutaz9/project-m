@@ -4,7 +4,7 @@ Various utility methods used through out the app.
 from textwrap import dedent
 import markdown
 import bleach
-
+import re
 from pymdownx import emoji
 
 extensions = [
@@ -87,3 +87,10 @@ def md_to_html(text: str):
             "span": ["class"],
         },
     )
+
+def is_email(email: str) -> bool:
+    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+    if re.search(regex, email):
+        return True
+    else:  
+        return False

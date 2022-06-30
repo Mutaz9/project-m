@@ -4,26 +4,30 @@ This is the flask app
 from email.policy import default
 import json
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, Response
 from dotenv import load_dotenv
 import requests
 from peewee import *
 import datetime
 from playhouse.shortcuts import model_to_dict
-from app.utilities import md_to_html
+from app.utilities import md_to_html, is_email
 
 load_dotenv()
 
 app = Flask(__name__)
 
-mydb = MySQLDatabase(os.getenv("MYSQL_DATABASE"),
-    user=os.getenv("MYSQL_USER"),
-    password=os.getenv("MYSQL_PASSWORD"),
-    host=os.getenv("MYSQL_HOST"),
-    port=3306
-)
+if os.getenv('TESTING') == 'true':
+    print('Running on test mode')
+    mydb = SqliteDatabase('file:foo?mode=memory&cache=shared', uri=True)
+else:
+    mydb = MySQLDatabase(os.getenv("MYSQL_DATABASE"),
+        user=os.getenv("MYSQL_USER"),
+        password=os.getenv("MYSQL_PASSWORD"),
+        host=os.getenv("MYSQL_HOST"),
+        port=3306
+    )
 
-print(mydb)
+#print(mydb)
 
 class TimelinePost(Model):
     name = CharField()
@@ -81,12 +85,29 @@ def page_not_found(_e):
 
 @app.route( '/api/timeline_post', methods=['POST'])
 def post_time_line_post():
-    name = request.form['name']
-    email = request.form['email']
-    content = request.form['content']
-    timeline_post = TimelinePost.create(name=name, email=email, content=content)
+    try:
+        name = request.form['name']
+        email = request.form['email']
+        content = request.form['content']
+
+        if not name or name.strip() == "":
+            return Response(response= "Invalid name", status=400)
+
+        if not content or content.strip() == "":
+            return Response(response= "Invalid content", status=400)
+
+        if not email or is_email(email) == False:
+            return Response(response= "Invalid email", status=400)
+
+        timeline_post = TimelinePost.create(name=name, email=email, content=content)
     
-    return model_to_dict(timeline_post)
+        return model_to_dict(timeline_post)
+    
+    except:
+         return Response(
+            response="Bad request, some attributes are missing",
+            status=400,
+        )
 
 @app.route( '/api/timeline_post', methods=['GET'])
 def get_time_line_post():
