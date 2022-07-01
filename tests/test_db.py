@@ -5,7 +5,7 @@ from app import TimelinePost
 
 MODELS = [TimelinePost]
 
-test_db  = SqliteDatabase(':memory')
+test_db  = SqliteDatabase(':memory:')
 
 class TestTimelinePost(unittest.TestCase):
     def setUp(self):
