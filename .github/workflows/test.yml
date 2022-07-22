@@ -21,12 +21,14 @@ jobs:
         with:
           python-version: "3.10.4"
 
-      - name: Setup Python Virtiaul Environment
+      - name: Setup Python Virtual Environment
         run: python3.10 -m venv venv
 
+      - name: Select Virtual Enviroment
+        run: source venv/bin/activate
+
       - name: Install Dependencies
-        run: source venv/bin/activate      
-        run: venv/bin/pip install -r requirements.txt
+        run: python3.10 -m pip install -r requirements.txt
 
       - name: Run Tests
         run: ./run_test.sh
